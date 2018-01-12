@@ -40,8 +40,7 @@ class VTK_SLICER_GUIDEDUSCALALGO_MODULE_LOGIC_EXPORT vtkSlicerGuidedUsCalAlgoLog
   public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerGuidedUsCalAlgoLogic *New();
+  static vtkSlicerGuidedUsCalAlgoLogic* New();
   vtkTypeMacro(vtkSlicerGuidedUsCalAlgoLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -55,8 +54,8 @@ protected:
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-private:
 
+private:
   vtkSlicerGuidedUsCalAlgoLogic(const vtkSlicerGuidedUsCalAlgoLogic&); // Not implemented
   void operator=(const vtkSlicerGuidedUsCalAlgoLogic&); // Not implemented
 };

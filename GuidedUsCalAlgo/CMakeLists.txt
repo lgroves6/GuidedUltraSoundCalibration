@@ -5,10 +5,6 @@ set(MODULE_TITLE ${MODULE_NAME})
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
-#——————————————————————————————————————————————————————————————————————————
-find_package(OpenCV 3.1 REQUIRED)
-get_filename_component(OpenCV_INCLUDE_DIR ${OpenCV_DIR}/../../include ABSOLUTE)
-
 #-----------------------------------------------------------------------------
 add_subdirectory(Logic)
 
@@ -50,11 +46,11 @@ slicerMacroBuildQtModule(
   NAME ${MODULE_NAME}
   TITLE ${MODULE_TITLE}
   EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES} ${OpenCV_INCLUDE_DIR}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
   SRCS ${MODULE_SRCS}
   MOC_SRCS ${MODULE_MOC_SRCS}
   UI_SRCS ${MODULE_UI_SRCS}
-  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES} ${OpenCV_LIBS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
   RESOURCES ${MODULE_RESOURCES}
   WITH_GENERIC_TESTS
   )
