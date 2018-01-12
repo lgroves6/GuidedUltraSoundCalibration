@@ -2,20 +2,21 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+import logging
 
 class GuidedUSCal(ScriptedLoadableModule):
-    """Uses ScriptedLoadableModuleWidget base class, available at:
-    https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
-    """
-    def __init__(self, parent):
-        ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title= "US Calibration Module"
-        self.parent.categories=["Examples"]
-        self.parent.contributors=["Leah Groves"]
-        self.parent.helpText="""
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+  def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title= "US Calibration Module"
+    self.parent.categories=["Examples"]
+    self.parent.contributors=["Leah Groves"]
+    self.parent.helpText="""
 This is a scripted loadable module that performs Ultrsound Calibration
 """
-        self.parent.helpText = self.getDefaultModuleDocumentationLink()
+    self.parent.helpText = self.getDefaultModuleDocumentationLink()
         
 class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
@@ -26,51 +27,52 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     self.fiducialNode = None
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+    layoutManager = slicer.app.layoutManager()
+    layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
 
     #tells them that you are creating a collapsible button 
     self.usButton = ctk.ctkCollapsibleButton()
-    self.usButton.text = "Ultrasound Control"
+    self.usButton.text = "Ultrasound Information"
     self.layout.addWidget(self.usButton)
-    self.streamLayout = qt.QFormLayout(self.usButton)
-    self.streamButton = qt.QPushButton("Stream")
-    self.streamButton.toolTip = "Print 'Calibrate' in standard output."
-    self.streamLayout.addWidget(self.streamButton)
-    self.streamButton.connect('clicked(bool)', self.onStreamButtonCicked)
+    self.usLayout = qt.QFormLayout(self.usButton)
 
     self.layout.addWidget(self.usButton)
-    self.freezeButton = qt.QPushButton("Freeze")
-    self.freezeButton.toolTip="Print 'Freeze' in standard output"
-    self.streamLayout.addWidget(self.freezeButton)
-    self.freezeButton.connect('clicked(bool)', self.onFreezeButtonClicked)
-
-    self.inputFrame = qt.QFrame(self.usButton)
-    self.inputFrame.setLayout(qt.QHBoxLayout())
-    self.streamLayout.addWidget(self.inputFrame)
-    self.inputSelector = qt.QLabel("Input Volume: ", self.inputFrame)
-    self.inputFrame.layout().addWidget(self.inputSelector)
-    self.inputSelector = slicer.qMRMLNodeComboBox(self.inputFrame)
-    self.inputSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
-    self.inputSelector.addEnabled = False
-    self.inputSelector.removeEnabled = False
-    self.inputSelector.setMRMLScene( slicer.mrmlScene )
-    self.inputFrame.layout().addWidget(self.inputSelector)
-    self.inputFrame.connect('clicked(bool)', self.onApply)
-    self.layout.addWidget(self.usButton)
-    self.applyButton = qt.QPushButton("Apply Volume")
-    self.applyButton.toolTip = "Open volume."
-    self.streamLayout.addWidget(self.applyButton)
-    self.applyButton.connect('clicked(bool)', self.onApply)
+    self.inputIPLineEdit = qt.QLineEdit()
+    self.inputIPLineEdit.setPlaceholderText("127.0.0.1")
+    self.inputIPLineEdit.toolTip = "Put the IP address of your ultrasound device here"
+    self.usLayout.addRow("Server IP:", self.inputIPLineEdit)
 
     self.layout.addWidget(self.usButton)
-    self.crossMarkerButton = qt.QPushButton("Set Straw center Marker")  
-    self.crossMarkerButton.toolTip = "Creates a marker to be placed on the straw"
-    self.streamLayout.addWidget(self.crossMarkerButton)
-    self.crossMarkerButton.connect('clicked(bool)', self.onCrossMarkerClicked)
+    self.inputPortLineEdit = qt.QLineEdit()
+    self.inputPortLineEdit.setPlaceholderText("18944")
+    self.inputPortLineEdit.toolTip = "Put the Port of your ultrasound device here"
+    self.usLayout.addRow("Server Port:", self.inputPortLineEdit)
 
     self.layout.addWidget(self.usButton)
+    self.connectButton = qt.QPushButton()
+    self.connectButton.text = "Connect"
+    self.connectButton.toolTip = "Connects to Ultrasound"
+    self.usLayout.addWidget(self.connectButton)
+    self.connectButton.connect('clicked(bool)', self.onConnectButtonClicked)
+
+    self.layout.addWidget(self.usButton)
+    self.captureButton = qt.QPushButton()
+    self.captureButton.text = "Capture Ultrasound Screen Shot"
+    self.captureButton.toolTip = "Capture Ultrasound Screen Shot"
+    self.usLayout.addWidget(self.captureButton)
+    self.captureButton.connect('clicked(bool)', self.onCaptureButtonClicked)
+
+    self.fiducialButton = ctk.ctkCollapsibleButton()
+    self.fiducialButton.text = "Registration"
+    self.layout.addWidget(self.usButton)
+    self.fiducialLayout = qt.QFormLayout(self.fiducialButton)
+
+    self.layout.addWidget(self.fiducialButton)
     self.faducialButton = qt.QPushButton("Set Faducial")  
     self.faducialButton.toolTip = "Creates a faducial to be placed on the straw"
-    self.streamLayout.addWidget(self.faducialButton)
+    self.fiducialLayout.addWidget(self.faducialButton)
     self.faducialButton.connect('clicked(bool)', self.onFaducialButtonClicked)
 
     # Calculate the path of the crosshair model and load it into the scene
@@ -80,22 +82,17 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     #adding an observer to scene to listen for mrml node 
     self.sceneObserverTag = slicer.mrmlScene.AddObserver(slicer.mrmlScene.NodeAddedEvent, self.onNodeAdded)
 
-  def onApply(self):
-    inputVolume = self.inputSelector.currentNode()
-    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(inputVolume.GetID())
-    slicer.app.applicationLogic().PropagateVolumeSelection(0)
-  
-  def onStreamButtonCicked(self):
-    print('Streaming')
+  def onConnectButtonClicked(self):
+    self.connectorNode = slicer.vtkMRMLIGTLConnectorNode()
+    slicer.mrmlScene.AddNode(self.connectorNode)
+    self.connectorNode.SetTypeClient(self.inputIPLineEdit.text, int(self.inputPortLineEdit.text));
+    self.connectorNode.Start()
 
-  def onFreezeButtonClicked(self):
-    print('Frozen') 
-
+  def onCaptureButtonClicked(self):
+    self.connectorNode.Stop()
+   
   def onFaducialButtonClicked(self):
     slicer.modules.markups.logic().StartPlaceMode(0)
-
-
 
   @vtk.calldata_type(vtk.VTK_OBJECT)
   def onNodeAdded(self, caller, event, callData):
@@ -119,24 +116,30 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     displayNode.SetGlyphType(3)
     displayNode.SetGlyphScale(7.5)
     displayNode.SetTextScale(0)
-    displayNode.SetSelectedColor(0, 1, 1)
+    displayNode.SetSelectedColor(0, 0, 1)
 
     self.fiducialNode.GetMarkupPoint(self.fiducialNode.GetNumberOfMarkups()-1,0, arr)
     print(arr)
 
-  def onCrossMarkerClicked(self):
-    # Create a linear transform node and pair it to the model node 
-    self.crosshairTransformNode = slicer.vtkMRMLLinearTransformNode()
-    slicer.mrmlScene.AddNode(self.crosshairTransformNode)
+    # self.layout.addWidget(self.fiducialButton)
+    # self.crossMarkerButton = qt.QPushButton("Set Straw center Marker")  
+    # self.crossMarkerButton.toolTip = "Creates a marker to be placed on the straw"
+    # self.fiducialLayout.addWidget(self.crossMarkerButton)
+    # self.crossMarkerButton.connect('clicked(bool)', self.onCrossMarkerClicked)
 
-    self.crosshairNode.SetAndObserveTransformNodeID(self.crosshairTransformNode.GetID())
-    self.crosshairNode.GetDisplayNode().SetColor(0, 1, 1)
-    self.crosshairNode.GetDisplayNode().SetSliceIntersectionVisibility(1)
+  # def onCrossMarkerClicked(self):
+  #   # Create a linear transform node and pair it to the model node 
+  #   self.crosshairTransformNode = slicer.vtkMRMLLinearTransformNode()
+  #   slicer.mrmlScene.AddNode(self.crosshairTransformNode)
 
-    mat = vtk.vtkMatrix4x4()
-    mat.SetElement(0,3,-250)
-    mat.SetElement(1,3,-250)
-    self.crosshairTransformNode.SetMatrixTransformToParent(mat)
+  #   self.crosshairNode.SetAndObserveTransformNodeID(self.crosshairTransformNode.GetID())
+  #   self.crosshairNode.GetDisplayNode().SetColor(0, 1, 1)
+  #   self.crosshairNode.GetDisplayNode().SetSliceIntersectionVisibility(1)
+
+  #   mat = vtk.vtkMatrix4x4()
+  #   mat.SetElement(0,3,-250)
+  #   mat.SetElement(1,3,-250)
+  #   self.crosshairTransformNode.SetMatrixTransformToParent(mat)
 
 
 
