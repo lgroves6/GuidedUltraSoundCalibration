@@ -19,44 +19,44 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerGuidedUsCalAlgoModuleWidget.h"
-#include "ui_qSlicerGuidedUsCalAlgoModuleWidget.h"
+#include "qSlicerGuidedUSCalAlgoModuleWidget.h"
+#include "ui_qSlicerGuidedUSCalAlgoModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerGuidedUsCalAlgoModuleWidgetPrivate: public Ui_qSlicerGuidedUsCalAlgoModuleWidget
+class qSlicerGuidedUSCalAlgoModuleWidgetPrivate: public Ui_qSlicerGuidedUSCalAlgoModuleWidget
 {
 public:
-  qSlicerGuidedUsCalAlgoModuleWidgetPrivate();
+  qSlicerGuidedUSCalAlgoModuleWidgetPrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerGuidedUsCalAlgoModuleWidgetPrivate methods
+// qSlicerGuidedUSCalAlgoModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModuleWidgetPrivate::qSlicerGuidedUsCalAlgoModuleWidgetPrivate()
+qSlicerGuidedUSCalAlgoModuleWidgetPrivate::qSlicerGuidedUSCalAlgoModuleWidgetPrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerGuidedUsCalAlgoModuleWidget methods
+// qSlicerGuidedUSCalAlgoModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModuleWidget::qSlicerGuidedUsCalAlgoModuleWidget(QWidget* _parent)
+qSlicerGuidedUSCalAlgoModuleWidget::qSlicerGuidedUSCalAlgoModuleWidget(QWidget* _parent)
   : Superclass( _parent )
-  , d_ptr( new qSlicerGuidedUsCalAlgoModuleWidgetPrivate )
+  , d_ptr( new qSlicerGuidedUSCalAlgoModuleWidgetPrivate )
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModuleWidget::~qSlicerGuidedUsCalAlgoModuleWidget()
+qSlicerGuidedUSCalAlgoModuleWidget::~qSlicerGuidedUSCalAlgoModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerGuidedUsCalAlgoModuleWidget::setup()
+void qSlicerGuidedUSCalAlgoModuleWidget::setup()
 {
-  Q_D(qSlicerGuidedUsCalAlgoModuleWidget);
+  Q_D(qSlicerGuidedUSCalAlgoModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
 }

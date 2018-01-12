@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-// GuidedUsCalAlgo Logic includes
-#include "vtkSlicerGuidedUsCalAlgoLogic.h"
+// GuidedUSCalAlgo Logic includes
+#include "vtkSlicerGuidedUSCalAlgoLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -30,26 +30,26 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerGuidedUsCalAlgoLogic);
+vtkStandardNewMacro(vtkSlicerGuidedUSCalAlgoLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerGuidedUsCalAlgoLogic::vtkSlicerGuidedUsCalAlgoLogic()
+vtkSlicerGuidedUSCalAlgoLogic::vtkSlicerGuidedUSCalAlgoLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerGuidedUsCalAlgoLogic::~vtkSlicerGuidedUsCalAlgoLogic()
+vtkSlicerGuidedUSCalAlgoLogic::~vtkSlicerGuidedUSCalAlgoLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerGuidedUSCalAlgoLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerGuidedUSCalAlgoLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -59,25 +59,25 @@ void vtkSlicerGuidedUsCalAlgoLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic::RegisterNodes()
+void vtkSlicerGuidedUSCalAlgoLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic::UpdateFromMRMLScene()
+void vtkSlicerGuidedUSCalAlgoLogic::UpdateFromMRMLScene()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic
+void vtkSlicerGuidedUSCalAlgoLogic
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGuidedUsCalAlgoLogic
+void vtkSlicerGuidedUSCalAlgoLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }

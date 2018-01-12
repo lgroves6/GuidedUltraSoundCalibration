@@ -15,19 +15,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerGuidedUsCalAlgoModule_h
-#define __qSlicerGuidedUsCalAlgoModule_h
+#ifndef __qSlicerGuidedUSCalAlgoModule_h
+#define __qSlicerGuidedUSCalAlgoModule_h
 
 // SlicerQt includes
 #include "qSlicerLoadableModule.h"
 
-#include "qSlicerGuidedUsCalAlgoModuleExport.h"
+#include "qSlicerGuidedUSCalAlgoModuleExport.h"
 
-class qSlicerGuidedUsCalAlgoModulePrivate;
+class qSlicerGuidedUSCalAlgoModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class Q_SLICER_QTMODULES_GUIDEDUSCALALGO_EXPORT
-qSlicerGuidedUsCalAlgoModule
+qSlicerGuidedUSCalAlgoModule
   : public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -39,8 +39,8 @@ qSlicerGuidedUsCalAlgoModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerGuidedUsCalAlgoModule(QObject *parent=0);
-  virtual ~qSlicerGuidedUsCalAlgoModule();
+  explicit qSlicerGuidedUSCalAlgoModule(QObject *parent=0);
+  virtual ~qSlicerGuidedUSCalAlgoModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -65,11 +65,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerGuidedUsCalAlgoModulePrivate> d_ptr;
+  QScopedPointer<qSlicerGuidedUSCalAlgoModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerGuidedUsCalAlgoModule);
-  Q_DISABLE_COPY(qSlicerGuidedUsCalAlgoModule);
+  Q_DECLARE_PRIVATE(qSlicerGuidedUSCalAlgoModule);
+  Q_DISABLE_COPY(qSlicerGuidedUSCalAlgoModule);
 
 };
 

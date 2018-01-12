@@ -15,64 +15,64 @@
 
 ==============================================================================*/
 
-// GuidedUsCalAlgo Logic includes
-#include <vtkSlicerGuidedUsCalAlgoLogic.h>
+// GuidedUSCalAlgo Logic includes
+#include <vtkSlicerGuidedUSCalAlgoLogic.h>
 
-// GuidedUsCalAlgo includes
-#include "qSlicerGuidedUsCalAlgoModule.h"
-#include "qSlicerGuidedUsCalAlgoModuleWidget.h"
+// GuidedUSCalAlgo includes
+#include "qSlicerGuidedUSCalAlgoModule.h"
+#include "qSlicerGuidedUSCalAlgoModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(qSlicerGuidedUsCalAlgoModule, qSlicerGuidedUsCalAlgoModule);
+Q_EXPORT_PLUGIN2(qSlicerGuidedUSCalAlgoModule, qSlicerGuidedUSCalAlgoModule);
 #endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerGuidedUsCalAlgoModulePrivate
+class qSlicerGuidedUSCalAlgoModulePrivate
 {
 public:
-  qSlicerGuidedUsCalAlgoModulePrivate();
+  qSlicerGuidedUSCalAlgoModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerGuidedUsCalAlgoModulePrivate methods
+// qSlicerGuidedUSCalAlgoModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModulePrivate::qSlicerGuidedUsCalAlgoModulePrivate()
+qSlicerGuidedUSCalAlgoModulePrivate::qSlicerGuidedUSCalAlgoModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerGuidedUsCalAlgoModule methods
+// qSlicerGuidedUSCalAlgoModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModule::qSlicerGuidedUsCalAlgoModule(QObject* _parent)
+qSlicerGuidedUSCalAlgoModule::qSlicerGuidedUSCalAlgoModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerGuidedUsCalAlgoModulePrivate)
+  , d_ptr(new qSlicerGuidedUSCalAlgoModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGuidedUsCalAlgoModule::~qSlicerGuidedUsCalAlgoModule()
+qSlicerGuidedUSCalAlgoModule::~qSlicerGuidedUSCalAlgoModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerGuidedUsCalAlgoModule::helpText() const
+QString qSlicerGuidedUSCalAlgoModule::helpText() const
 {
   return "This is a hidden loadable module that contains a point to line registration algorithm";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerGuidedUsCalAlgoModule::acknowledgementText() const
+QString qSlicerGuidedUSCalAlgoModule::acknowledgementText() const
 {
   return "The algorithm was written by Elvis Chen (Robarts Research Institute). This extention was created by Leah Groves (Robarts Research Institute), with help from Adam Rankin (Robarts Research Institute)";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerGuidedUsCalAlgoModule::contributors() const
+QStringList qSlicerGuidedUSCalAlgoModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Elvis Chen (Robarts Research Intitute)")
@@ -83,38 +83,38 @@ QStringList qSlicerGuidedUsCalAlgoModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerGuidedUsCalAlgoModule::icon() const
+QIcon qSlicerGuidedUSCalAlgoModule::icon() const
 {
-  return QIcon(":/Icons/GuidedUsCalAlgo.png");
+  return QIcon(":/Icons/GuidedUSCalAlgo.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerGuidedUsCalAlgoModule::categories() const
+QStringList qSlicerGuidedUSCalAlgoModule::categories() const
 {
   return QStringList() << "IGT";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerGuidedUsCalAlgoModule::dependencies() const
+QStringList qSlicerGuidedUSCalAlgoModule::dependencies() const
 {
   return QStringList()<< "SlicerOpenCV";
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerGuidedUsCalAlgoModule::setup()
+void qSlicerGuidedUSCalAlgoModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerGuidedUsCalAlgoModule
+qSlicerAbstractModuleRepresentation* qSlicerGuidedUSCalAlgoModule
 ::createWidgetRepresentation()
 {
-  return new qSlicerGuidedUsCalAlgoModuleWidget;
+  return new qSlicerGuidedUSCalAlgoModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerGuidedUsCalAlgoModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerGuidedUSCalAlgoModule::createLogic()
 {
-  return vtkSlicerGuidedUsCalAlgoLogic::New();
+  return vtkSlicerGuidedUSCalAlgoLogic::New();
 }

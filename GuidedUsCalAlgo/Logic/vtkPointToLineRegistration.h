@@ -36,7 +36,7 @@ class vtkVector3d;
 #include <vtkSmartPointer.h>
 
 // Local includes
-#include "vtkSlicerGuidedUsCalAlgoModuleLogicExport.h"
+#include "vtkSlicerGuidedUSCalAlgoModuleLogicExport.h"
 
 // STL includes
 #include <vector>

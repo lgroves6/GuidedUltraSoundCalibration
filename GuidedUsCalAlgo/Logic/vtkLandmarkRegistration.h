@@ -31,7 +31,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include <vtkObject.h>
 #include <vtkSmartPointer.h>
 
-#include "vtkSlicerGuidedUsCalAlgoModuleLogicExport.h"
+#include "vtkSlicerGuidedUSCalAlgoModuleLogicExport.h"
 
 class VTK_SLICER_GUIDEDUSCALALGO_MODULE_LOGIC_EXPORT vtkLandmarkRegistration : public vtkObject
 {

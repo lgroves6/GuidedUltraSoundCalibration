@@ -15,19 +15,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerGuidedUsCalAlgoModuleWidget_h
-#define __qSlicerGuidedUsCalAlgoModuleWidget_h
+#ifndef __qSlicerGuidedUSCalAlgoModuleWidget_h
+#define __qSlicerGuidedUSCalAlgoModuleWidget_h
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerGuidedUsCalAlgoModuleExport.h"
+#include "qSlicerGuidedUSCalAlgoModuleExport.h"
 
-class qSlicerGuidedUsCalAlgoModuleWidgetPrivate;
+class qSlicerGuidedUSCalAlgoModuleWidgetPrivate;
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_GUIDEDUSCALALGO_EXPORT qSlicerGuidedUsCalAlgoModuleWidget :
+class Q_SLICER_QTMODULES_GUIDEDUSCALALGO_EXPORT qSlicerGuidedUSCalAlgoModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
@@ -35,20 +35,20 @@ class Q_SLICER_QTMODULES_GUIDEDUSCALALGO_EXPORT qSlicerGuidedUsCalAlgoModuleWidg
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerGuidedUsCalAlgoModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerGuidedUsCalAlgoModuleWidget();
+  qSlicerGuidedUSCalAlgoModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerGuidedUSCalAlgoModuleWidget();
 
 public slots:
 
 
 protected:
-  QScopedPointer<qSlicerGuidedUsCalAlgoModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerGuidedUSCalAlgoModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerGuidedUsCalAlgoModuleWidget);
-  Q_DISABLE_COPY(qSlicerGuidedUsCalAlgoModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerGuidedUSCalAlgoModuleWidget);
+  Q_DISABLE_COPY(qSlicerGuidedUSCalAlgoModuleWidget);
 };
 
 #endif
