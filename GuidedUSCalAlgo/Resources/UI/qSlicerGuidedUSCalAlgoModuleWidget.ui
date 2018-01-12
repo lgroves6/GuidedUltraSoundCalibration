@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerGuidedUsCalAlgoModuleWidget</class>
- <widget class="qSlicerWidget" name="qSlicerGuidedUsCalAlgoModuleWidget">
+ <class>qSlicerGuidedUSCalAlgoModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerGuidedUSCalAlgoModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

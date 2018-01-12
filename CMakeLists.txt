@@ -21,7 +21,7 @@ include(${Slicer_USE_FILE})
 #-----------------------------------------------------------------------------
 # Extension modules
 add_subdirectory(GuidedUSCal)
-add_subdirectory(GuidedUsCalAlgo)
+add_subdirectory(GuidedUSCalAlgo)
 ## NEXT_MODULE
 
 #-----------------------------------------------------------------------------
