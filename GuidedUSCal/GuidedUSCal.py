@@ -41,8 +41,9 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     ScriptedLoadableModuleWidget.setup(self)
 
     #This sets the view being used to the red view only 
-    layoutManager = slicer.app.layoutManager()
-    layoutManager.setLayout(slicer.vtkMRMLLayoutNode(6))
+    redLayout = slicer.app.layoutManager()
+    redLayout.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSsetliceView)
+    #redLayout.setLayout(slicer.vtkMRMLLayoutNode(6))
 
     #This code block creates a collapsible button 
     #This defines which type of button you are using 
