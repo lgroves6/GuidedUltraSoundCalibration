@@ -17,6 +17,7 @@
 
 // GuidedUSCalAlgo Logic includes
 #include "vtkSlicerGuidedUSCalAlgoLogic.h"
+#include "vtkPointToLineRegistration.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -34,6 +35,7 @@ vtkStandardNewMacro(vtkSlicerGuidedUSCalAlgoLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerGuidedUSCalAlgoLogic::vtkSlicerGuidedUSCalAlgoLogic()
+  : PointToLineRegistration(vtkSmartPointer<vtkPointToLineRegistration>::New())
 {
 }
 
@@ -48,8 +50,51 @@ void vtkSlicerGuidedUSCalAlgoLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerGuidedUSCalAlgoLogic::AddPointAndLine(double point[3], double lineOrigin[3], double lineDirection[3])
+{
+  this->PointToLineRegistration->AddPoint(point[0], point[1], point[2]);
+  PointToLineRegistration->AddLine(lineOrigin[0], lineOrigin[1], lineOrigin[2], lineDirection[0], lineDirection[1], lineDirection[2]);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerGuidedUSCalAlgoLogic::Reset()
+{
+  this->PointToLineRegistration->Reset();
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4* vtkSlicerGuidedUSCalAlgoLogic::CalculateRegistration()
+{
+  return this->PointToLineRegistration->Compute();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerGuidedUSCalAlgoLogic::SetTolerance(double arg)
+{
+  this->PointToLineRegistration->SetTolerance(arg);
+}
+
+//----------------------------------------------------------------------------
+double vtkSlicerGuidedUSCalAlgoLogic::GetTolerance() const
+{
+  return this->PointToLineRegistration->GetTolerance();
+}
+
+//----------------------------------------------------------------------------
+unsigned int vtkSlicerGuidedUSCalAlgoLogic::GetCount() const
+{
+  return this->PointToLineRegistration->GetCount();
+}
+
+//----------------------------------------------------------------------------
+double vtkSlicerGuidedUSCalAlgoLogic::GetError() const
+{
+  return this->PointToLineRegistration->GetError();
+}
+
 //---------------------------------------------------------------------------
-void vtkSlicerGuidedUSCalAlgoLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerGuidedUSCalAlgoLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

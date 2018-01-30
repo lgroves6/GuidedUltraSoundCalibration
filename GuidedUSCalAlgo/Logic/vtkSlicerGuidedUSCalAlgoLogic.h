@@ -32,8 +32,13 @@
 // STD includes
 #include <cstdlib>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 #include "vtkSlicerGuidedUSCalAlgoModuleLogicExport.h"
 
+class vtkPointToLineRegistration;
+class vtkMatrix4x4;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_GUIDEDUSCALALGO_MODULE_LOGIC_EXPORT vtkSlicerGuidedUSCalAlgoLogic :
@@ -43,6 +48,16 @@ public:
   static vtkSlicerGuidedUSCalAlgoLogic* New();
   vtkTypeMacro(vtkSlicerGuidedUSCalAlgoLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  void AddPointAndLine(double point[3], double lineOrigin[3], double lineDirection[3]);
+  void Reset();
+
+  vtkMatrix4x4* CalculateRegistration();
+
+  void SetTolerance(double arg);
+  double GetTolerance() const;
+  unsigned int GetCount() const;
+  double GetError() const;
 
 protected:
   vtkSlicerGuidedUSCalAlgoLogic();
@@ -54,6 +69,8 @@ protected:
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+
+  vtkSmartPointer<vtkPointToLineRegistration> PointToLineRegistration;
 
 private:
   vtkSlicerGuidedUSCalAlgoLogic(const vtkSlicerGuidedUSCalAlgoLogic&); // Not implemented
