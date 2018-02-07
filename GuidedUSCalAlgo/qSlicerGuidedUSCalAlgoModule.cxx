@@ -97,7 +97,7 @@ QStringList qSlicerGuidedUSCalAlgoModule::categories() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerGuidedUSCalAlgoModule::dependencies() const
 {
-  return QStringList()<< "SlicerOpenCV";
+  return QStringList();
 }
 
 //-----------------------------------------------------------------------------
