@@ -56,6 +56,8 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     # this is the function that implements all GUI 
     ScriptedLoadableModuleWidget.setup(self)
 
+    slicer.mymod = self
+
     #This sets the view being used to the red view only 
     #slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutSideBySideView)
     #slicer.app.layoutManager().sliceWidget('yellow')
@@ -96,7 +98,7 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     #adds the widget to the layout 
     self.usLayout.addWidget(self.connectButton)
 
-        # Combobox for image selection
+    # Combobox for image selection
     self.imageSelector = slicer.qMRMLNodeComboBox()
     self.imageSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.imageSelector.selectNodeUponCreation = True
@@ -120,7 +122,7 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     self.guidedButton.toolTip = "This allows the user to select if they want to use the guidance"
     self.usLayout.addRow(self.guidedButton)
    
-        #This creates another collapsible button
+    # This creates another collapsible button
     self.fiducialContainer = ctk.ctkCollapsibleButton()
     self.fiducialContainer.text = "Registration"
     self.fiducialLayout = qt.QFormLayout(self.fiducialContainer)
@@ -232,9 +234,8 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.connectorNode = slicer.vtkMRMLIGTLConnectorNode()
       #Adds this node to the scene, not there is no need for self here as it is its own node
       slicer.mrmlScene.AddNode(self.connectorNode)
-      #connects to the system using the typed user input from the lineEdit
+      # Configures the connector
       self.connectorNode.SetTypeClient(self.inputIPLineEdit.text, int(self.inputPortLineEdit.text));
-      #This starts the connection
 
     if self.connectorNode.GetState() == 2:
       # Connected, disconnect
@@ -242,11 +243,10 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.connectButton.text = "Connect"
       self.freezeButton.text = "Unfreeze"
     else:
+      # This starts the connection
       self.connectorNode.Start()
       self.connectButton.text = "Disconnect"
       self.freezeButton.text = "Freeze"
-
-    self.T1 = time.count()
 
   def onGuidedButtonClicked(self):
     if self.guidedButton.isChecked():
@@ -254,8 +254,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     else:
       slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutSideBySideView)
       slicer.app.layoutManager().sliceWidget('yellow')
-
-      self.T2 = time.count()
 
   def onImageChanged(self, index):
     if self.imageSelector.currentNode() is not None:
@@ -265,7 +263,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.resliceLogic.SetDriverForSlice(self.imageSelector.currentNode().GetID(), slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed'))
       self.resliceLogic.SetModeForSlice(self.resliceLogic.MODE_TRANSVERSE, slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed'))
       slicer.app.layoutManager().sliceWidget("Red").sliceController().fitSliceToBackground()
-      self.T3 = time.count()
  
   #This is the function that runs once the fiducial button is pressed
   def onFiducialButtonClicked(self):
@@ -273,7 +270,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     #startPlaceMode(0) means only one markup gets place
     slicer.modules.markups.logic().StartPlaceMode(0)
     slicer.app.layoutManager().sliceWidget('Red').setCursor(qt.QCursor(2))
-    self.T4 = time.count()
 
   #this runs when that fiducial node is added 
   @vtk.calldata_type(vtk.VTK_OBJECT)
@@ -294,7 +290,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.markupAddedObserverTag = self.fiducialNode.AddObserver(slicer.vtkMRMLMarkupsNode.MarkupAddedEvent, self.onMarkupAdded)
       #this runs the function onMarkupAdded
       self.onMarkupAdded(self.fiducialNode, slicer.vtkMRMLMarkupsNode.MarkupAddedEvent)
-    self.T5 = time.count()
 
   def onInputChanged(self, string):
     if re.match("\d{1,3}\.\d{1,3}\.\d{1,3}[^0-9]", self.inputIPLineEdit.text) and self.inputPortLineEdit.text != "" and int(self.inputPortLineEdit.text) > 0 and int(self.inputPortLineEdit.text) <= 65535:
@@ -305,7 +300,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     else:
       self.connectButton.enabled = False
       self.freezeButton.enabled = False
-    self.T6 = time.count()
 
   # removes the observer    
   def cleanup(self):
@@ -318,7 +312,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     self.inputIPLineEdit.disconnect('textChanged(QString)', self.onInputChanged)
     self.inputPortLineEdit.disconnect('textChanged(QString)', self.onInputChanged)
     self.imageSelector.disconnect('currentNodeChanged(vtkMRMLNode*)', self.onImageChanged)
-    self.T7 = time.count()
 
   def onVisualizeButtonClicked(self):
     if self.fiducialNode is not None:
@@ -331,13 +324,12 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.visualizeButton.text = 'Show 3D Scene'
     else:
       self.isVisualizing = True
-      slicer.app.layoutManager().setLayout(self.customLayoutId)
+      slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView)
       if self.strawTransformSelector.currentNode() is not None:
         self.strawTransformSelector.currentNode().SetAttribute('IGTLVisible', 'true')
       self.visualizeButton.text = 'Show Slices'
     
     self.connectorNode.InvokeEvent(slicer.vtkMRMLIGTLConnectorNode.DeviceModifiedEvent) 
-    self.T8 = time.count()
 
   def onResetButtonClicked(self):
     slicer.util.reloadScriptedModule("GuidedUSCal")
@@ -367,29 +359,27 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     # Collect the point in image space
     self.fiducialNode.GetMarkupPoint(self.fiducialNode.GetNumberOfMarkups()-1,0, centroid)
 
-    if self.logic.GetCount >=3:
+    if self.logic.GetCount >= 5:
       mat = self.logic.CalculateRegistration()
       self.outputRegistrationTransformNode.SetMatrixTransformToParent(mat)
-
-    self.T9 = time.count()
-
+      # self.logic.GetError()
   def onImageChanged(self, newImageNode):
     if self.imageNode is not None:
       # Unparent
       self.imageNode.SetAndObserveTransformNodeID(None)
+      return()
 
     self.imageNode = self.imageSelector.currentNode()
     self.imageSelector.currentNode().SetAndObserveTransformNodeID(self.outputRegistrationTransformNode.GetID())
-    self.T10 = time.count()
 
   def onProbeChanged(self, newProbeNode):
     if self.probeNode is not None:
       # Unparent
       self.probeNode.SetAndObserveTransformNodeID(None)
+      return()
 
     self.probeNode = self.probeTransformSelector.currentNode()
     self.outputRegistrationTransformNode.SetAndObserveTransformNodeID(self.probeTransformSelector.currentNode().GetID())
-    self.T11 = time.count()
 
   def Reset(self):
     self.regLogic.Reset()
@@ -400,7 +390,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     dir = [strawTransform.GetElement(0, 2), strawTransform.GetElement(1,2), strawTransform.GetElement(2,2)]
 
     self.logic.AddPointAndLine(centroid, origin, dir)
-    self.T12 = time.count()
 
 class GuidedUSCalLogic(ScriptedLoadableModuleLogic):
   def __init__(self):
@@ -414,5 +403,6 @@ class GuidedUSCalLogic(ScriptedLoadableModuleLogic):
 
   def CalculateRegistration(self):
     return self.regLogic.Update()
-    self.totalTime = self.T1 + self.T2 + self.T3 + self.T4 + self.T5 + self.T6 + self.T7 + self.T8 + self.T9 + self.T10 + self.T11 + self.T12 
-    return totalTime
+
+  def GetError(self):
+    return self.regLogic.GetError()
