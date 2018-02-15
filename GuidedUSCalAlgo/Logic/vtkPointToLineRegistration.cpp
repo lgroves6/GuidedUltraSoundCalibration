@@ -151,7 +151,7 @@ unsigned int vtkPointToLineRegistration::GetCount() const
 */
 vtkMatrix4x4* vtkPointToLineRegistration::Compute()
 {
-  vtkNew<vtkMatrix4x4> matrix;
+  vtkMatrix4x4* matrix = vtkMatrix4x4::New();
   matrix->Identity();
 
   if (this->Points.size() != this->Lines.size())
@@ -195,12 +195,12 @@ vtkMatrix4x4* vtkPointToLineRegistration::Compute()
   cv::Mat R = cv::Mat::eye(3, 3, CV_32F);
   cv::Mat t = cv::Mat::zeros(3, 1, CV_32F);
 
-  vtkNew<vtkLandmarkTransform> landmarkRegistration;
+  vtkLandmarkTransform* landmarkRegistration = vtkLandmarkTransform::New();
   landmarkRegistration->SetModeToRigidBody();
 
-  vtkNew<vtkPoints> source;
-  vtkNew<vtkPoints> target;
-  vtkNew<vtkMatrix4x4> result;
+  vtkSmartPointer<vtkPoints> source = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkPoints> target = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkMatrix4x4> result = vtkSmartPointer<vtkMatrix4x4>::New();
   while (outError > this->Tolerance)
   {
     source->Reset();
