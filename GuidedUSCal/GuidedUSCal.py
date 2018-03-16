@@ -248,14 +248,15 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       # Connected, disconnect
       self.connectorNode.Stop()
       self.connectButton.text = "Connect"
-      #self.freezeButton.text = "Unfreeze"
+     # self.freezeButton.text = "Unfreeze"
       slicer.modules.markups.logic().StartPlaceMode(0)
       slicer.app.layoutManager().sliceWidget('Red').setCursor(qt.QCursor(2))
+     
     else:
       # This starts the connection
       self.connectorNode.Start()
       self.connectButton.text = "Disconnect"
-      #self.freezeButton.text = "Freeze"
+      self.freezeButton.text = "Freeze"
    
 	 
     if self.fiducialNode is not None:
