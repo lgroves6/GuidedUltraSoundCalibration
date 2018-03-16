@@ -49,6 +49,7 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     self.isVisualizing = False
     self.outputRegistrationTransformNode = None
     self.inputRegistrationTransformNode = None
+    self.NeedleTipToReferenceTransformNode = None
 
   def setup(self):
     # this is the function that implements all GUI 
@@ -57,8 +58,8 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     slicer.mymod = self
      #This sets the view being used to the red view only 
     slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
-    #l=slicer.modules.createmodels.logic()
-    #self.needle = l.CreateNeedle(180, 0.75, 0, False)
+    l=slicer.modules.createmodels.logic()
+    self.needle = l.CreateNeedle(180, 0.3, 0, False)
 
     #This code block creates a collapsible button 
     #This defines which type of button you are using 
@@ -224,7 +225,7 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     self.outputRegistrationTransformNode = slicer.vtkMRMLLinearTransformNode()
     slicer.mrmlScene.AddNode(self.outputRegistrationTransformNode)
     self.outputRegistrationTransformNode.SetName('ImageToProbe')
-	
+
     self.NeedleTipToReferenceTransformNode = slicer.vtkMRMLLinearTransformNode()
     slicer.mrmlScene.AddNode(self.NeedleTipToReferenceTransformNode)
 
@@ -243,19 +244,23 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
         self.resliceLogic.SetDriverForSlice(self.imageSelector.currentNode().GetID(), slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed'))
         self.resliceLogic.SetModeForSlice(self.resliceLogic.MODE_TRANSVERSE, slicer.mrmlScene.GetNodeByID('vtkMRMLSliceNodeRed'))
         slicer.app.layoutManager().sliceWidget("Red").sliceController().fitSliceToBackground()
- 
-	   
     if self.connectorNode.GetState() == 2:
       # Connected, disconnect
       self.connectorNode.Stop()
       self.connectButton.text = "Connect"
-      self.freezeButton.text = "Unfreeze"
+      #self.freezeButton.text = "Unfreeze"
+      slicer.modules.markups.logic().StartPlaceMode(0)
+      slicer.app.layoutManager().sliceWidget('Red').setCursor(qt.QCursor(2))
     else:
       # This starts the connection
       self.connectorNode.Start()
       self.connectButton.text = "Disconnect"
-      self.freezeButton.text = "Freeze"
-
+      #self.freezeButton.text = "Freeze"
+   
+	 
+    if self.fiducialNode is not None:
+	    self.fiducialNode.RemoveAllMarkups()
+	  
   def onGuidedButtonClicked(self):
     if self.guidedButton.isChecked():
       slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
@@ -285,6 +290,7 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     #startPlaceMode(0) means only one markup gets place
     slicer.modules.markups.logic().StartPlaceMode(0)
     slicer.app.layoutManager().sliceWidget('Red').setCursor(qt.QCursor(2))
+	
 	 
     if self.fiducialNode is not None:
 	    self.fiducialNode.RemoveAllMarkups()
@@ -354,18 +360,21 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
       self.isVisualizing = True
       slicer.app.layoutManager().sliceWidget('Red').sliceLogic().GetSliceNode().SetSliceVisible(True)
       slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUp3DView)
-  
-      #self.NeedleTipToReferenceTransformNode.SetAndObserveTransformNodeID(self.strawTransformSelector.currentNode().GetID())
-      # self.NeedleTipToReferenceTransformNode.SetMatrixTransformToParent(self.needle)
-      #if self.strawTransformSelector.currentNode() is not None:
-        #self.strawTransformSelector.currentNode().SetAttribute('IGTLVisible', 'true')
+		#slicer.app.layoutManager().threeDWidget(0).threeDView().setMaximumSize()
+	  
+    if self.strawTransformSelector.currentNode() is not None:
+      self.NeedleNode = self.strawTransformSelector.currentNode()
+      self.needle.SetAndObserveTransformNodeID(self.NeedleNode.GetID())
       self.visualizeButton.text = 'Show Slices'
-    
     self.connectorNode.InvokeEvent(slicer.vtkMRMLIGTLConnectorNode.DeviceModifiedEvent) 
 
   def onResetButtonClicked(self):
     if self.fiducialNode is not None:
 	  self.fiducialNode.RemoveAllMarkups()
+
+  def fitUltrasoundImageToView(self):
+    redWidget = slicer.app.layoutManager().sliceWidget('Red')
+    redWidget.sliceController().fitSliceToBackground()
 
   #This gets called when the markup is added
   def onMarkupAdded(self, fiducialNodeCaller, event):
@@ -394,6 +403,8 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     #print(centroid) 	
     self.numFidLabel.setText(str(self.numFid)) 
     #Collect the line in tracker space
+    probeTransform = vtk.vtkMatrix4x4()
+    self.probeTransformSelector.currentNode().GetMatrixTransformToWorld(probeTransform)
     strawTransform = vtk.vtkMatrix4x4()
     self.strawTransformSelector.currentNode().GetMatrixTransformToWorld(strawTransform)
     origin = [strawTransform.GetElement(0, 3), strawTransform.GetElement(1,3), strawTransform.GetElement(2,3)]
@@ -404,13 +415,25 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     print('centroid' + str(centroid))
 	
 	
-    if self.numFid>=5:    
+    if self.numFid>=1:    
       self.ImageToProbe = self.logic.CalculateRegistration()
-      print(self.ImageToProbe)	  
-      print('Error: ' + str(self.logic.GetError()))
-    
-    if self.numFid>= 15: 
-      self.outputRegistrationTransformNode.SetMatrixTransformToParent(self.ImageToProbe)	
+      #print('output:')
+      #print('[' + str(self.ImageToProbe[0]) +','+ str(self.ImageToProbe[1]) +','+ str(self.ImageToProbe[2]) +';'+ str(self.ImageToProbe[3])+','+ str(self.ImageToProbe[4])+','+ str(self.ImageToProbe[5])+';'+ str(self.ImageToProbe[6])+','+ str(self.ImageToProbe[7])+','+ str(self.ImageToProbe[8]) + ']')	  
+      print(self.ImageToProbe)
+      print('Straw Tracking:') 
+      print(strawTransform) 
+     # print('[' + str(strawTransform(0,0)) + ',' + str(strawTransform(0,1)) + ','  + str(strawTransform(0,2)) + ';' + str(strawTransform(1,0)) + ','  + str(strawTransform(1,1)) + ','  + str(strawTransform(1,2)) + ';'  + str(strawTransform(2,0)) + ','  + str(strawTransform(2,1)) + ','  + str(strawTransform(2,1)) + ']'+ ';'    ) 
+      print('probe Tracking:')
+      print(probeTransform) 
+      #print('[' + str(probeTransform(0,0)) + ',' + str(probeTransform(0,1)) + ','  + str(probeTransform(0,2)) + ';' + str(probeTransform(1,0)) + ','  + str(probeTransform(1,1)) + ','  + str(probeTransform(1,2)) + ';'  + str(probeTransform(2,0)) + ','  + str(probeTransform(2,1)) + ','  + str(probeTransform2,1)) + ']'+ ';'    ) 
+      print('Error: ' + str(self.logic.GetError()))	
+      self.connectorNode.Start()
+	  
+	
+    if self.numFid>=15: 
+      self.outputRegistrationTransformNode.SetMatrixTransformToParent(self.ImageToProbe)
+		#slicer.app.layoutManager().sliceWidget("Red").sliceController().fitSliceToBackground()
+         #self.fitUltrasoundImageToView()
 	
 	
   def Reset(self):
