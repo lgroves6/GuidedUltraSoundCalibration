@@ -381,8 +381,6 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
   def onMarkupAdded(self, fiducialNodeCaller, event):
     #set the location and index to zero because its needs to be initialized
     centroid=[0,0,0]
-    ImageToProbe = vtk.vtkMatrix4x4()
-    MarkupIndex = 0
     self.numFid = self.numFid + 1 
     #This checks if there is not a display node 
     if self.fiducialNode.GetDisplayNode() is None:
@@ -400,12 +398,9 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
     displayNode.SetSelectedColor(0, 0, 1)
     # this saves the location the markup is place
     # Collect the point in image space
-    self.fiducialNode.GetMarkupPoint(self.fiducialNode.GetNumberOfMarkups()-1,0, centroid)
-    #print(centroid) 	
+    self.fiducialNode.GetMarkupPoint(self.fiducialNode.GetNumberOfMarkups()-1,0, centroid)	
     self.numFidLabel.setText(str(self.numFid)) 
     #Collect the line in tracker space
-    probeTransform = vtk.vtkMatrix4x4()
-    self.probeTransformSelector.currentNode().GetMatrixTransformToWorld(probeTransform)
     strawTransform = vtk.vtkMatrix4x4()
     self.strawTransformSelector.currentNode().GetMatrixTransformToWorld(strawTransform)
     origin = [strawTransform.GetElement(0, 3), strawTransform.GetElement(1,3), strawTransform.GetElement(2,3)]
@@ -418,24 +413,18 @@ class GuidedUSCalWidget(ScriptedLoadableModuleWidget):
 	
     if self.numFid>=1:    
       self.ImageToProbe = self.logic.CalculateRegistration()
-      #print('output:')
-      #print('[' + str(self.ImageToProbe[0]) +','+ str(self.ImageToProbe[1]) +','+ str(self.ImageToProbe[2]) +';'+ str(self.ImageToProbe[3])+','+ str(self.ImageToProbe[4])+','+ str(self.ImageToProbe[5])+';'+ str(self.ImageToProbe[6])+','+ str(self.ImageToProbe[7])+','+ str(self.ImageToProbe[8]) + ']')	  
       print(self.ImageToProbe)
       print('Straw Tracking:') 
       print(strawTransform) 
-     # print('[' + str(strawTransform(0,0)) + ',' + str(strawTransform(0,1)) + ','  + str(strawTransform(0,2)) + ';' + str(strawTransform(1,0)) + ','  + str(strawTransform(1,1)) + ','  + str(strawTransform(1,2)) + ';'  + str(strawTransform(2,0)) + ','  + str(strawTransform(2,1)) + ','  + str(strawTransform(2,1)) + ']'+ ';'    ) 
       print('probe Tracking:')
       print(probeTransform) 
-      #print('[' + str(probeTransform(0,0)) + ',' + str(probeTransform(0,1)) + ','  + str(probeTransform(0,2)) + ';' + str(probeTransform(1,0)) + ','  + str(probeTransform(1,1)) + ','  + str(probeTransform(1,2)) + ';'  + str(probeTransform(2,0)) + ','  + str(probeTransform(2,1)) + ','  + str(probeTransform2,1)) + ']'+ ';'    ) 
       print('Error: ' + str(self.logic.GetError()))	
       self.connectorNode.Start()
 	  
 	
     if self.numFid>=15: 
       self.outputRegistrationTransformNode.SetMatrixTransformToParent(self.ImageToProbe)
-		#slicer.app.layoutManager().sliceWidget("Red").sliceController().fitSliceToBackground()
-         #self.fitUltrasoundImageToView()
-	
+
 	
   def Reset(self):
     slicer.modules.guideduscalalgo.logic().Reset()
